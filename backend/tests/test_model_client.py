@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-from app import gemma_client
+from app import model_client
 from app.config import Settings
 
 
@@ -47,8 +47,8 @@ class CapturingAsyncClient:
 
 
 @pytest.mark.anyio
-async def test_generate_gemma_response_adds_safe_api_error_metadata(monkeypatch, capsys):
-    monkeypatch.setattr(gemma_client.httpx, "AsyncClient", FailingAsyncClient)
+async def test_generate_model_response_adds_safe_api_error_metadata(monkeypatch, capsys):
+    monkeypatch.setattr(model_client.httpx, "AsyncClient", FailingAsyncClient)
     settings = Settings(
         _env_file=None,
         gemini_api_key="super-secret",
@@ -57,7 +57,7 @@ async def test_generate_gemma_response_adds_safe_api_error_metadata(monkeypatch,
         mock_gemma_when_missing_key=True,
     )
 
-    raw_response, metadata = await gemma_client.generate_gemma_response(
+    raw_response, metadata = await model_client.generate_model_response(
         "Summarize product feedback.",
         "general",
         settings,
@@ -78,7 +78,7 @@ async def test_generate_gemma_response_adds_safe_api_error_metadata(monkeypatch,
     assert "super-secret" not in metadata["error_message"]
 
     console_output = capsys.readouterr().out
-    assert "Gemma API call failed" in console_output
+    assert "Model API call failed" in console_output
     assert "super-secret" not in console_output
 
 
@@ -106,9 +106,9 @@ def test_cors_origin_list_accepts_comma_separated_deployed_frontends():
 
 
 @pytest.mark.anyio
-async def test_generate_gemma_response_sends_generation_config(monkeypatch):
+async def test_generate_model_response_sends_generation_config(monkeypatch):
     CapturingAsyncClient.payloads = []
-    monkeypatch.setattr(gemma_client.httpx, "AsyncClient", CapturingAsyncClient)
+    monkeypatch.setattr(model_client.httpx, "AsyncClient", CapturingAsyncClient)
     settings = Settings(
         _env_file=None,
         gemini_api_key="test-key",
@@ -117,7 +117,7 @@ async def test_generate_gemma_response_sends_generation_config(monkeypatch):
         mock_gemma_when_missing_key=True,
     )
 
-    raw_response, metadata = await gemma_client.generate_gemma_response(
+    raw_response, metadata = await model_client.generate_model_response(
         "Summarize product feedback.",
         "general",
         settings,
@@ -133,7 +133,7 @@ async def test_generate_gemma_response_sends_generation_config(monkeypatch):
 
 
 @pytest.mark.anyio
-async def test_generate_gemma_response_uses_mock_when_no_key_present():
+async def test_generate_model_response_uses_mock_when_no_key_present():
     settings = Settings(
         _env_file=None,
         gemini_api_key=None,
@@ -142,7 +142,7 @@ async def test_generate_gemma_response_uses_mock_when_no_key_present():
         mock_gemma_when_missing_key=True,
     )
 
-    raw_response, metadata = await gemma_client.generate_gemma_response(
+    raw_response, metadata = await model_client.generate_model_response(
         "Summarize product feedback.",
         "general",
         settings,

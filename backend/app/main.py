@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.gemma_client import generate_gemma_response
+from app.model_client import generate_model_response
 from app.governance import analyze_prompt, finalize_response
 from app.schemas import AnalyzeRequest, AnalyzeResponse
 from app.trace import build_trace, new_trace_id
@@ -34,8 +34,8 @@ def health() -> dict[str, str | bool | list[str]]:
         "status": "ok",
         "app_name": "NEES Core Engine — Google Immersion Demo",
         "version": "0.1.0",
-        "mock_mode": not bool(settings.gemini_api_key) and settings.mock_gemma_when_missing_key,
-        "model": settings.gemma_model,
+        "mock_mode": not bool(settings.gemini_api_key) and settings.mock_when_missing_key,
+        "model": settings.configured_model,
         "fallback_models": settings.fallback_model_list,
     }
 
@@ -45,7 +45,7 @@ def health() -> dict[str, str | bool | list[str]]:
 async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     trace_id = new_trace_id()
     analysis = analyze_prompt(request.prompt, request.scenario)
-    raw_response, model_metadata = await generate_gemma_response(
+    raw_response, model_metadata = await generate_model_response(
         request.prompt,
         request.scenario,
         settings,

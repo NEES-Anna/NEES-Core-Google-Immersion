@@ -11,14 +11,14 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 from app.config import Settings
-from app.gemma_client import RETRY_DELAY_SECONDS, call_gemma_model, is_retryable_error, safe_exception_metadata
+from app.model_client import RETRY_DELAY_SECONDS, call_model, is_retryable_error, safe_exception_metadata
 
 
 async def main() -> None:
     settings = Settings(_env_file=BACKEND_DIR / ".env")
     key_present = bool(settings.gemini_api_key)
 
-    print(f"model: {settings.gemma_model}")
+    print(f"model: {settings.configured_model}")
     print(f"key_present: {str(key_present).lower()}")
     print(f"attempted_models: {', '.join(settings.live_model_candidates)}")
 
@@ -37,14 +37,14 @@ async def main() -> None:
     }
 
     failed_models: list[dict[str, str | int]] = []
-    async with httpx.AsyncClient(timeout=settings.gemma_timeout_seconds) as client:
+    async with httpx.AsyncClient(timeout=settings.configured_timeout_seconds) as client:
         for model in settings.live_model_candidates:
             for attempt_number in range(1, 3):
                 try:
-                    text = await call_gemma_model(client, model, settings.gemini_api_key, payload)
+                    text = await call_model(client, model, settings.gemini_api_key, payload)
                     print("success: true")
                     print(f"used_model: {model}")
-                    print(f"fallback_used: {str(model != settings.gemma_model).lower()}")
+                    print(f"fallback_used: {str(model != settings.configured_model).lower()}")
                     print(f"response: {text}")
                     return
                 except Exception as exc:

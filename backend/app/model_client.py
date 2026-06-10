@@ -15,12 +15,12 @@ RETRYABLE_STATUS_CODES = {429, 500, 503}
 RETRY_DELAY_SECONDS = 0.25
 
 
-async def generate_gemma_response(prompt: str, scenario: str, settings: Settings) -> tuple[str, dict[str, Any]]:
+async def generate_model_response(prompt: str, scenario: str, settings: Settings) -> tuple[str, dict[str, Any]]:
     attempted_models: list[str] = []
     failed_models: list[dict[str, str | int]] = []
-    requested_model = settings.gemma_model
+    requested_model = settings.configured_model
     metadata: dict[str, Any] = {
-        "model": settings.gemma_model,
+        "model": settings.configured_model,
         "requested_model": requested_model,
         "used_model": "",
         "provider": "google_gemini_api",
@@ -31,11 +31,11 @@ async def generate_gemma_response(prompt: str, scenario: str, settings: Settings
     }
 
     if not settings.gemini_api_key:
-        if settings.mock_gemma_when_missing_key:
+        if settings.mock_when_missing_key:
             metadata["mock"] = True
             metadata["provider"] = "mock"
-            metadata["used_model"] = settings.gemma_model
-            return mock_gemma_response(prompt, scenario), metadata
+            metadata["used_model"] = settings.configured_model
+            return mock_model_candidate_response(prompt, scenario), metadata
         raise RuntimeError("GEMINI_API_KEY is required when mock mode is disabled.")
 
     payload = {
@@ -62,13 +62,13 @@ async def generate_gemma_response(prompt: str, scenario: str, settings: Settings
         },
     }
 
-    async with httpx.AsyncClient(timeout=settings.gemma_timeout_seconds) as client:
+    async with httpx.AsyncClient(timeout=settings.configured_timeout_seconds) as client:
         for model in settings.live_model_candidates:
             attempted_models.append(model)
             max_attempts = 2
             for attempt_number in range(1, max_attempts + 1):
                 try:
-                    text = await call_gemma_model(client, model, settings.gemini_api_key, payload)
+                    text = await call_model(client, model, settings.gemini_api_key, payload)
                     if text:
                         metadata["model"] = model
                         metadata["used_model"] = model
@@ -78,7 +78,7 @@ async def generate_gemma_response(prompt: str, scenario: str, settings: Settings
                     failure = {
                         "model": model,
                         "error": "EmptyAPIResponse",
-                        "error_message": "Gemma API response did not contain text.",
+                        "error_message": "Model API response did not contain text.",
                     }
                     failed_models.append(failure)
                     log_safe_api_error(failure, model)
@@ -95,15 +95,15 @@ async def generate_gemma_response(prompt: str, scenario: str, settings: Settings
 
     metadata["mock"] = True
     metadata["provider"] = "mock_after_api_error"
-    metadata["used_model"] = settings.gemma_model
+    metadata["used_model"] = settings.configured_model
     metadata["fallback_used"] = len(attempted_models) > 1
     if failed_models:
         metadata.update({key: value for key, value in failed_models[-1].items() if key != "model"})
     log_all_models_failed(metadata)
-    return mock_gemma_response(prompt, scenario), metadata
+    return mock_model_candidate_response(prompt, scenario), metadata
 
 
-async def call_gemma_model(client: httpx.AsyncClient, model: str, api_key: str, payload: dict) -> str:
+async def call_model(client: httpx.AsyncClient, model: str, api_key: str, payload: dict) -> str:
     endpoint = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
         f"{model}:generateContent"
@@ -157,7 +157,7 @@ def is_retryable_error(metadata: dict[str, str | int]) -> bool:
 def log_safe_api_error(metadata: dict[str, str | int], model: str | None = None) -> None:
     model_detail = f" model={model}" if model else ""
     summary = (
-        f"Gemma API call failed;{model_detail} "
+        f"Model API call failed;{model_detail} "
         f"error={metadata.get('error')} "
         f"status={metadata.get('error_status_code', 'unknown')} "
         f"message={metadata.get('error_message', '')}"
@@ -168,14 +168,14 @@ def log_safe_api_error(metadata: dict[str, str | int], model: str | None = None)
 
 def log_all_models_failed(metadata: dict[str, Any]) -> None:
     summary = (
-        "All Gemma live models failed; falling back to mock. "
+        "All configured live models failed; falling back to mock. "
         f"attempted_models={metadata.get('attempted_models', [])}"
     )
     logger.warning(summary)
     print(summary)
 
 
-def mock_gemma_response(prompt: str, scenario: str) -> str:
+def mock_model_candidate_response(prompt: str, scenario: str) -> str:
     if scenario == "memory_boundary":
         return (
             "[MOCK MODEL CANDIDATE RESPONSE]\n"

@@ -105,7 +105,7 @@ NEES-Core-Google-Immersion/
 |   |-- app/
 |   |   |-- main.py              # FastAPI Router & Endpoint mappings
 |   |   |-- config.py            # Pydantic environment configurations
-|   |   |-- gemma_client.py      # Legacy-named Gemini/model client adapter
+|   |   |-- model_client.py      # Gemini-ready model client adapter with mock fallback
 |   |   |-- governance.py        # Input/Output governance policy logic
 |   |   |-- schemas.py           # Pydantic data schemas
 |   |   `-- trace.py            # Audit log trace constructor

@@ -1,0 +1,54 @@
+NEES Core Engine — Google Immersion Demo Source-Available Evaluation-Only License
+
+Copyright (c) 2026 Nainacore Emotional Tech.
+All rights reserved.
+
+This repository is made available solely for review, learning, demonstration,
+and evaluation in connection with the Google for Startups Immersion Phase 2 review.
+
+Subject to the restrictions below, you may read, inspect, run locally, and
+evaluate the source code for non-commercial educational, review, demonstration,
+and challenge evaluation purposes.
+
+You may not, without prior written permission from Nainacore Emotional Tech:
+
+- use this software, source code, documentation, names, designs, or related
+  materials for commercial purposes;
+- redistribute, sublicense, sell, rent, lease, host, or provide this software
+  or any substantial portion of it as a service;
+- rebrand, white-label, or present this software as your own product or
+  offering;
+- create, distribute, or operate derivative commercial products, hosted
+  services, managed services, SaaS offerings, or enterprise deployments based
+  on this software;
+- remove or alter copyright, license, trademark, attribution, or disclaimer
+  notices; or
+- use this repository to reproduce, infer, bypass, or replace private
+  Nainacore Emotional Tech infrastructure, enterprise controls, runtime
+  systems, governance systems, memory systems, policy systems, simulation or
+  replay systems, or production NEES Core Engine capabilities.
+
+This repository is a standalone public demonstration prepared for Google for
+Startups Immersion Phase 2 review. It is not the production NEES Core Engine.
+Advanced NEES runtime, policy, memory governance, replay/simulation, enterprise
+controls, and private infrastructure are not included.
+
+No trademark rights are granted. Nainacore, Nainacore Emotional Tech, NEES,
+NEES Core Engine, and related names, marks, logos, product names, and brand
+assets are trademarks or proprietary identifiers of Nainacore Emotional Tech.
+You may not use them except to accurately refer to this repository and its
+origin.
+
+THE SOFTWARE AND MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, SECURITY, OR
+ERROR-FREE OPERATION. IN NO EVENT SHALL NAINACORE EMOTIONAL TECH BE LIABLE FOR
+ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM OR RELATED TO THIS
+SOFTWARE, MATERIALS, OR THEIR USE.
+
+Any rights not expressly granted in this license are reserved by Nainacore
+Emotional Tech.
+
+For commercial licensing or written permission, contact:
+Nainacore Emotional Tech
+Website: https://www.nainaaicreation.com

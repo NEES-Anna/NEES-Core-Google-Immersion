@@ -1,18 +1,20 @@
 # NEES Core Engine — Google Immersion Demo
 
-> This is a standalone, source-available developer demo showcasing runtime AI safety and governance models, built for the **Google for Startups Immersion Phase 2** submission. It is not the production NEES Core Engine.
+> This is a standalone, source-available developer demo showcasing runtime AI safety and governance patterns, built for the **Google for Startups Immersion Phase 2** submission. It is not the production NEES Core Engine.
 
-**NEES Core Engine — Google Immersion Demo** demonstrates how a lightweight **NEES runtime governance layer** can wrap open model intelligence (using the Gemini API) to enforce safety policies, track fallback paths, detect malicious intents, and manage critical system boundaries.
+**NEES Core Engine — Google Immersion Demo** demonstrates how a lightweight **NEES runtime governance layer** can wrap model intelligence through a Gemini-ready provider layer to enforce safety policies, track fallback paths, detect risky intent, and protect critical system boundaries.
 
-> **Open-model API calls provide raw intelligence. NEES Core Engine provides intent alignment, memory safety, and predictable behavior.**
+> **Model API calls provide raw intelligence. NEES Core Engine provides intent alignment, memory safety, traceability, and predictable behavior.**
 
 ---
 
-## Live Links (Placeholders)
+## Live Links
 
-- **Live Demo Application:** `https://nees-core-demo.vercel.app/` *(Placeholder)*
-- **Backend Health Check:** `https://nees-core-backend.onrender.com/health` *(Placeholder)*
-- **Company / Project Site:** [https://www.nainaaicreation.com](https://www.nainaaicreation.com)
+- **Google Immersion Demo:** [https://nees-core-google-immersion.vercel.app](https://nees-core-google-immersion.vercel.app)
+- **Backend API:** [https://nees-core-google-immersion-api.onrender.com](https://nees-core-google-immersion-api.onrender.com)
+- **Backend Health Check:** [https://nees-core-google-immersion-api.onrender.com/health](https://nees-core-google-immersion-api.onrender.com/health)
+- **Existing NEES Sample App:** [https://naina.nees.cloud](https://naina.nees.cloud)
+- **Company Website:** [https://www.nainaaicreation.com](https://www.nainaaicreation.com), [https://www.nees.cloud/](https://www.nees.cloud/)
 
 ---
 
@@ -22,7 +24,7 @@ Standard LLM architectures send prompts directly to the model and return raw out
 * User requests are aligned and safe;
 * Model responses are clean and formatted;
 * Traceability and model fallbacks are logged;
-* System prompts, keys, and configurations are hidden behind memory boundaries.
+* System prompts, private memory, credentials, and configuration details must never be exposed to model-visible context.
 
 This demo illustrates this pattern:
 
@@ -59,7 +61,7 @@ This demo implements critical design patterns based on **Google Immersion sessio
 ## Current Deployment Status
 
 * **Local Environment**: Fully runnable. The frontend and backend run locally using a mock fallback mode when no Gemini API key is provided, allowing full local evaluation.
-* **Google Cloud Run Deployment**: **Planned & Blocked**. The deployment to Google Cloud Run is fully configured. However, live deployment is currently blocked during Phase 1 because the current Google Cloud billing account is suspended.
+* **Google Cloud Run Deployment**: **Planned & Blocked**. The repository includes a Docker-ready backend and a documented Google Cloud Run deployment plan. Live Cloud Run deployment is currently blocked during Phase 1 because the current Google Cloud billing account is suspended.
 
 ---
 
@@ -86,8 +88,8 @@ Our primary goals for Phase 2 focus on production scalability on Google Cloud Pl
 
 ## Features
 
-- **Decoupled API Client**: Handles primary Gemini models with automatic cascading fallback.
-- **Mock Mode**: Runs locally and executes tests without credentials when `GEMINI_API_KEY` is missing.
+- **Decoupled Model Client**: Supports a Gemini-ready model client with optional fallback model configuration.
+- **Mock Mode**: Runs locally, supports public demos, and executes tests without credentials when `GEMINI_API_KEY` is missing.
 - **Intent and Risk Classifier**: Labels risk levels (`green`, `yellow`, `red`) and maps action policies.
 - **Output Cleanup**: Restructures model raw output to strip out internal thinking or draft fragments.
 - **Trace ID & Audit Trail**: Provides inspection tags and response SHA-256 prefixes.
@@ -103,7 +105,7 @@ NEES-Core-Google-Immersion/
 |   |-- app/
 |   |   |-- main.py              # FastAPI Router & Endpoint mappings
 |   |   |-- config.py            # Pydantic environment configurations
-|   |   |-- gemma_client.py      # Decoupled model client
+|   |   |-- gemma_client.py      # Legacy-named Gemini/model client adapter
 |   |   |-- governance.py        # Input/Output governance policy logic
 |   |   |-- schemas.py           # Pydantic data schemas
 |   |   `-- trace.py            # Audit log trace constructor
